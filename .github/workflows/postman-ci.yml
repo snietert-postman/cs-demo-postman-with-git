@@ -88,17 +88,24 @@ jobs:
         run: |
           postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
           
-          # Run Inventory Management API tests
-          echo "Running Inventory Management API tests..."
-          postman collection run postman/collections/Inventory-Management-API-Updated.postman_collection.json \
-            -e postman/environments/Localhost.postman_environment.json \
-            -r cli,json
+          # Run all collections in the postman/collections folder
+          echo "Running all Postman collections..."
+          for collection in postman/collections/*.json; do
+            if [ -f "$collection" ]; then
+              echo "Running collection: $collection"
+              postman collection run -i "postman/collections/$collection" -e 43110232-6231803b-1b77-460c-897c-9ff81d425538 -r cli,json
+              
+              # Check if the collection run was successful
+              if [ $? -ne 0 ]; then
+                echo "❌ Collection $collection failed"
+                exit 1
+              fi
+              echo "✅ Collection $collection passed"
+              echo ""
+            fi
+          done
           
-          # Run Customer Feedback API tests
-          echo "Running Customer Feedback API tests..."
-          postman collection run postman/collections/Customer-Feedback-API.postman_collection.json \
-            -e postman/environments/Localhost.postman_environment.json \
-            -r cli,json
+          echo "🎉 All collections passed successfully!"
       
   # Job 3: Push to Postman - Runs only on main branch after successful tests
   push-to-postman:
