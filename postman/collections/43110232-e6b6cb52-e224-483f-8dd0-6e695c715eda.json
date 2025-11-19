@@ -126,13 +126,13 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/inventory/items",
+					"raw": "{{baseUrl}}/api/inventory",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
-						"inventory",
-						"items"
+						"api",
+						"inventory"
 					]
 				}
 			},
