@@ -1,16 +1,22 @@
 name: Postman CI/CD Pipeline
 
 # GitHub Workflow Logic:
-# 1. On push to feature branches: Run spec-lint → functional-tests (using feature branch code)
-# 2. On push to main (when PR is merged): Run spec-lint → functional-tests → push-to-postman (using merged main code)
+# 1. On pull request to main: Run spec-lint → functional-tests (using feature branch code from PR)
+# 2. On push to main (when PR is merged): Run spec-lint → functional-tests → sync-collections-to-postman (using merged main code)
+#    - sync-collections-to-postman: For each collection in postman/collections/, check if it exists in the workspace by name
+#      - If exists: Update the collection via Postman API
+#      - If not exists: Create the collection in the workspace via Postman API
 
 on:
   push:
     branches:
-      - '**'  # Trigger on all branches (including main when PR is merged)
+      - main  # Trigger on commits/merges to main
+  pull_request:
+    branches:
+      - main  # Trigger on PRs targeting main
 
 jobs:
-  # Job 1: Spec Lint - Validates API schema on all branches
+  # Job 1: Spec Lint - Validates API schema on PRs and main branch
   spec-lint:
     name: Spec Lint
     runs-on: ubuntu-latest
@@ -36,7 +42,7 @@ jobs:
           echo "Linting Open API Spec containeing all APIs..."
           postman spec lint openapi.json
           
-  # Job 2: Functional Tests - Runs Postman collections on all branches (depends on spec-lint)
+  # Job 2: Functional Tests - Runs Postman collections on PRs and main branch (depends on spec-lint)
   functional-tests:
     name: Functional Tests
     runs-on: ubuntu-latest
@@ -93,7 +99,7 @@ jobs:
           for collection in postman/collections/*.json; do
             if [ -f "$collection" ]; then
               echo "Running collection: $collection"
-              postman collection run -i "postman/collections/$collection" -e 43110232-6231803b-1b77-460c-897c-9ff81d425538 -r cli,json
+              postman collection run "$collection" -e 43110232-6231803b-1b77-460c-897c-9ff81d425538 -r cli,json
               
               # Check if the collection run was successful
               if [ $? -ne 0 ]; then
@@ -107,9 +113,9 @@ jobs:
           
           echo "🎉 All collections passed successfully!"
       
-  # Job 3: Push to Postman - Runs only on main branch after successful tests
-  push-to-postman:
-    name: Push to Postman Workspace (Only on Main Branch)
+  # Job 3: Sync Collections to Postman Workspace - Runs only on main branch after successful tests
+  sync-collections-to-postman:
+    name: Sync Collections to Postman Workspace (Only on Main Branch)
     runs-on: ubuntu-latest
     if: github.ref == 'refs/heads/main'
     needs: [functional-tests]
@@ -124,22 +130,106 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
       
-      - name: Install Postman CLI
+      - name: Sync Collections to Postman Workspace
+        env:
+          POSTMAN_API_KEY: ${{ secrets.POSTMAN_API_KEY }}
+          WORKSPACE_ID: "e59e3813-9a85-4920-9b6a-e61d784ff94c"
         run: |
-          curl -o- "https://dl-cli.pstmn.io/install/linux64.sh" | sh
-      
-      - name: Push Collections to Postman Workspace
-        run: |
-          postman login --with-api-key ${{ secrets.POSTMAN_API_KEY }}
+          echo "🔄 Syncing collections to Postman workspace..."
+          echo "Workspace ID: $WORKSPACE_ID"
           
-          # Push all changes to Postman Workspace
-          echo "Pushing all changes to Postman workspace..."
-          postman workspace push --yes
-          echo "✅ Successfully pushed all changes to Postman workspace!"
+          # Get all collections from the specific workspace
+          echo "Fetching existing collections from workspace..."
+          WORKSPACE_COLLECTIONS=$(curl -s -X GET \
+            "https://api.getpostman.com/collections?workspace=$WORKSPACE_ID" \
+            -H "X-Api-Key: $POSTMAN_API_KEY")
+          
+          # Process each collection file
+          for collection_file in postman/collections/*.json; do
+            if [ -f "$collection_file" ]; then
+              echo ""
+              echo "📦 Processing collection: $collection_file"
+              
+              # Extract collection name and ID from the file
+              COLLECTION_NAME=$(jq -r '.info.name' "$collection_file")
+              COLLECTION_FILE_ID=$(jq -r '.info._postman_id' "$collection_file")
+              
+              echo "Collection name: $COLLECTION_NAME"
+              echo "Collection file ID: $COLLECTION_FILE_ID"
+              
+              # Check if collection exists in workspace by name (returns the collection's uid and name)
+              EXISTING_COLLECTION_DATA=$(echo "$WORKSPACE_COLLECTIONS" | jq -r --arg name "$COLLECTION_NAME" \
+                '.collections[]? | select(.name == $name) | {uid: .uid, name: .name}')
+              
+              EXISTING_COLLECTION_UID=$(echo "$EXISTING_COLLECTION_DATA" | jq -r '.uid // empty')
+              EXISTING_COLLECTION_NAME=$(echo "$EXISTING_COLLECTION_DATA" | jq -r '.name // empty')
+              
+              if [ -n "$EXISTING_COLLECTION_UID" ] && [ "$EXISTING_COLLECTION_UID" != "null" ]; then
+                # Collection exists - update it using its UID
+                echo "✏️  Collection '$EXISTING_COLLECTION_NAME' exists in workspace (UID: $EXISTING_COLLECTION_UID)"
+                echo "Updating collection using UID: $EXISTING_COLLECTION_UID"
+                
+                # Wrap collection data in "collection" object as required by Postman API
+                COLLECTION_DATA=$(jq '{collection: .}' "$collection_file")
+                
+                # Log the endpoint and payload for debugging
+                UPDATE_URL="https://api.getpostman.com/collections/$EXISTING_COLLECTION_UID"
+                echo "🔗 PUT Endpoint: $UPDATE_URL"
+                echo "📦 Payload preview:"
+                echo "$COLLECTION_DATA" | jq -C '.collection | {name: .info.name, item_count: (.item | length)}'
+                
+                UPDATE_RESPONSE=$(curl -s -X PUT \
+                  "$UPDATE_URL" \
+                  -H "X-Api-Key: $POSTMAN_API_KEY" \
+                  -H "Content-Type: application/json" \
+                  -d "$COLLECTION_DATA")
+                
+                # Check if update was successful
+                if echo "$UPDATE_RESPONSE" | jq -e '.collection' > /dev/null 2>&1; then
+                  echo "✅ Successfully updated collection '$COLLECTION_NAME'"
+                else
+                  echo "❌ Failed to update collection '$COLLECTION_NAME'"
+                  echo "Response: $UPDATE_RESPONSE"
+                  exit 1
+                fi
+              else
+                # Collection doesn't exist - create it
+                echo "➕ Collection '$COLLECTION_NAME' doesn't exist. Creating..."
+                
+                # Wrap collection data in "collection" object and remove _postman_id (Postman will generate a new one)
+                COLLECTION_DATA=$(jq '{collection: (. | del(.info._postman_id))}' "$collection_file")
+                
+                # Log the endpoint and payload for debugging
+                CREATE_URL="https://api.getpostman.com/collections?workspace=$WORKSPACE_ID"
+                echo "🔗 POST Endpoint: $CREATE_URL"
+                echo "📦 Payload preview:"
+                echo "$COLLECTION_DATA" | jq -C '.collection | {name: .info.name, has_postman_id: (.info._postman_id != null), item_count: (.item | length)}'
+                
+                CREATE_RESPONSE=$(curl -s -X POST \
+                  "$CREATE_URL" \
+                  -H "X-Api-Key: $POSTMAN_API_KEY" \
+                  -H "Content-Type: application/json" \
+                  -d "$COLLECTION_DATA")
+                
+                # Check if creation was successful
+                if echo "$CREATE_RESPONSE" | jq -e '.collection' > /dev/null 2>&1; then
+                  NEW_UID=$(echo "$CREATE_RESPONSE" | jq -r '.collection.uid')
+                  echo "✅ Successfully created collection '$COLLECTION_NAME' (UID: $NEW_UID)"
+                else
+                  echo "❌ Failed to create collection '$COLLECTION_NAME'"
+                  echo "Response: $CREATE_RESPONSE"
+                  exit 1
+                fi
+              fi
+            fi
+          done
+          
+          echo ""
+          echo "🎉 All collections synced successfully!"
       
       - name: Notify Success
         if: success()
         run: |
           echo "🎉 Pipeline completed successfully!"
           echo "✅ All tests passed"
-          echo "✅ All changes pushed to Postman workspace"
+          echo "✅ All collections synced to Postman workspace"
