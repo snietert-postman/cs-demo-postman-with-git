@@ -115,6 +115,18 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get all inventory items",
+			"id": "43110232-85cf3399-c98d-409a-91f9-723f74046742",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
 		}
 	]
 }
