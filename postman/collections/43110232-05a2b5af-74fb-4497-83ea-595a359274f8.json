@@ -122,35 +122,6 @@
 				}
 			},
 			"response": []
-		},
-		{
-			"name": "Get single feedback item",
-			"id": "43110232-7f3f4879-70f6-4be8-a044-15fb1a99bdf0",
-			"protocolProfileBehavior": {
-				"disableBodyPruning": true
-			},
-			"request": {
-				"method": "GET",
-				"header": [],
-				"url": {
-					"raw": "{{baseUrl}}/api/feedback/:id",
-					"host": [
-						"{{baseUrl}}"
-					],
-					"path": [
-						"api",
-						"feedback",
-						":id"
-					],
-					"variable": [
-						{
-							"key": "id",
-							"value": "2"
-						}
-					]
-				}
-			},
-			"response": []
 		}
 	]
 }
