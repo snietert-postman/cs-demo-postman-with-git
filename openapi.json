@@ -431,53 +431,6 @@
         "tags": [
           "Feedback"
         ]
-      },
-      "post": {
-        "description": "Create a new feedback item",
-        "operationId": "FeedbackController_create",
-        "parameters": [],
-        "requestBody": {
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateFeedbackItemDto"
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "description": "Feedback submitted successfully",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "message": {
-                      "type": "string",
-                      "example": "Feedback submitted successfully"
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/FeedbackItemEntity"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Invalid input data"
-          }
-        },
-        "summary": "Submit new customer feedback",
-        "tags": [
-          "Feedback"
-        ]
       }
     },
     "/api/feedback/{id}": {
@@ -718,37 +671,6 @@
         },
         "required": [
           "id",
-          "date",
-          "title",
-          "email",
-          "description"
-        ]
-      },
-      "CreateFeedbackItemDto": {
-        "type": "object",
-        "properties": {
-          "date": {
-            "type": "string",
-            "description": "Date of the feedback",
-            "example": "2025-11-14"
-          },
-          "title": {
-            "type": "string",
-            "description": "Title of the feedback",
-            "example": "Great product quality"
-          },
-          "email": {
-            "type": "string",
-            "description": "Email of the reporter",
-            "example": "customer@example.com"
-          },
-          "description": {
-            "type": "string",
-            "description": "Detailed description of the feedback",
-            "example": "The product exceeded my expectations. Very satisfied with the purchase."
-          }
-        },
-        "required": [
           "date",
           "title",
           "email",
