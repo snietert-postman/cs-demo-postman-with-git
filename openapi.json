@@ -432,69 +432,6 @@
           "Feedback"
         ]
       }
-    },
-    "/api/feedback/{id}": {
-      "get": {
-        "description": "Retrieve details of a single feedback item by its ID",
-        "operationId": "FeedbackController_findOne",
-        "parameters": [
-          {
-            "name": "id",
-            "required": true,
-            "in": "path",
-            "description": "Unique identifier of the feedback item",
-            "schema": {
-              "example": 1,
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Successfully retrieved feedback item",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": true
-                    },
-                    "data": {
-                      "$ref": "#/components/schemas/FeedbackItemEntity"
-                    }
-                  }
-                }
-              }
-            }
-          },
-          "404": {
-            "description": "Feedback item not found",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "success": {
-                      "type": "boolean",
-                      "example": false
-                    },
-                    "error": {
-                      "type": "string",
-                      "example": "Feedback item with ID 1 not found"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        },
-        "summary": "Get a specific feedback item",
-        "tags": [
-          "Feedback"
-        ]
-      }
     }
   },
   "info": {
