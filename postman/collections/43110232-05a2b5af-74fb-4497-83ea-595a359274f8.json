@@ -124,7 +124,7 @@
 			"response": []
 		},
 		{
-			"name": "Get feedback list Copy",
+			"name": "Get single feedback item",
 			"event": [
 				{
 					"listen": "test",
@@ -229,13 +229,20 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "{{baseUrl}}/api/feedback",
+					"raw": "{{baseUrl}}/api/feedback/:id",
 					"host": [
 						"{{baseUrl}}"
 					],
 					"path": [
 						"api",
-						"feedback"
+						"feedback",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": ""
+						}
 					]
 				}
 			},
