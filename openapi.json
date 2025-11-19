@@ -1,7 +1,7 @@
 {
   "openapi": "3.0.0",
   "paths": {
-    "/": {
+    "/info": {
       "get": {
         "description": "Get basic information about the API and available endpoints",
         "operationId": "AppController_getInfo",
