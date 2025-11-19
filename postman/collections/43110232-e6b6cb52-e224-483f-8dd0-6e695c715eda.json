@@ -244,6 +244,117 @@
 				}
 			},
 			"response": []
+		},
+		{
+			"name": "Get single inventory item",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "8469d95d-cdd5-41a7-abf5-765b42ceb69c",
+						"exec": [
+							"// Test 1: Verify status code is 200",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"// Test 2: Verify response has correct structure",
+							"pm.test(\"Response has correct structure with success and data fields\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData).to.have.property('success');",
+							"    pm.expect(jsonData).to.have.property('data');",
+							"    pm.expect(jsonData.data).to.be.an('object');",
+							"});",
+							"",
+							"// Test 3: Verify success field is true",
+							"pm.test(\"Success field is true\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.success).to.be.true;",
+							"});",
+							"",
+							"// Test 4: Verify data object contains all required fields",
+							"pm.test(\"Data object contains all required fields\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data).to.have.property('id');",
+							"    pm.expect(jsonData.data).to.have.property('name');",
+							"    pm.expect(jsonData.data).to.have.property('description');",
+							"    pm.expect(jsonData.data).to.have.property('quantity');",
+							"    pm.expect(jsonData.data).to.have.property('price');",
+							"});",
+							"",
+							"// Test 5: Verify field types are correct",
+							"pm.test(\"Field types are correct\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    var data = jsonData.data;",
+							"    ",
+							"    pm.expect(data.id).to.be.a('number');",
+							"    pm.expect(data.name).to.be.a('string');",
+							"    pm.expect(data.description).to.be.a('string');",
+							"    pm.expect(data.quantity).to.be.a('number');",
+							"    pm.expect(data.price).to.be.a('number');",
+							"});",
+							"",
+							"// Test 6: Verify quantity is valid (>= 0)",
+							"pm.test(\"Quantity is a valid non-negative number\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.quantity).to.be.at.least(0);",
+							"});",
+							"",
+							"// Test 7: Verify price is valid (>= 0)",
+							"pm.test(\"Price is a valid non-negative number\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.price).to.be.at.least(0);",
+							"});",
+							"",
+							"// Test 8: Verify id is a positive number",
+							"pm.test(\"ID is a positive number\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.id).to.be.above(0);",
+							"});",
+							"",
+							"// Test 9: Verify name is not empty",
+							"pm.test(\"Name is not empty\", function () {",
+							"    var jsonData = pm.response.json();",
+							"    pm.expect(jsonData.data.name).to.have.lengthOf.at.least(1);",
+							"});",
+							"",
+							"// Test 10: Verify response time is acceptable",
+							"pm.test(\"Response time is less than 2000ms\", function () {",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);",
+							"});"
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"id": "43110232-3e53aef0-4b83-4c05-a026-856e9a57d2f3",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/api/inventory/:id",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"api",
+						"inventory",
+						":id"
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "32"
+						}
+					]
+				}
+			},
+			"response": []
 		}
 	]
 }
