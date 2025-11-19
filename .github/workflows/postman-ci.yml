@@ -1,6 +1,6 @@
 name: Postman CI/CD Pipeline
 
-# Workflow Logic:
+# GitHub Workflow Logic:
 # 1. On push to feature branches: Run spec-lint → functional-tests (using feature branch code)
 # 2. On push to main (when PR is merged): Run spec-lint → functional-tests → push-to-postman (using merged main code)
 
