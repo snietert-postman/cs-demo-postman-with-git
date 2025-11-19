@@ -124,7 +124,16 @@
 			},
 			"request": {
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/inventory",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"inventory"
+					]
+				}
 			},
 			"response": []
 		}
