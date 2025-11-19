@@ -1,0 +1,98 @@
+{
+  "inventory": [
+    {
+      "id": 32,
+      "name": "Laptop",
+      "description": "High-performance laptop for business use - Updated model",
+      "quantity": 20,
+      "price": 1199.99
+    },
+    {
+      "id": 33,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with blue switches",
+      "quantity": 25,
+      "price": 89.99
+    },
+    {
+      "id": 34,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with blue switches",
+      "quantity": 25,
+      "price": 89.99
+    },
+    {
+      "id": 35,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with blue switches",
+      "quantity": 25,
+      "price": 89.99
+    },
+    {
+      "id": 36,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with blue switches",
+      "quantity": 25,
+      "price": 89.99
+    },
+    {
+      "id": 37,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with blue switches",
+      "quantity": 25,
+      "price": 89.99
+    },
+    {
+      "id": 38,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with blue switches",
+      "quantity": 25,
+      "price": 89.99
+    },
+    {
+      "id": 39,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with blue switches",
+      "quantity": 25,
+      "price": 89.99
+    },
+    {
+      "id": 40,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with blue switches",
+      "quantity": 25,
+      "price": 89.99
+    },
+    {
+      "id": 41,
+      "name": "Mechanical Keyboard",
+      "description": "RGB mechanical keyboard with blue switches",
+      "quantity": 25,
+      "price": 89.99
+    }
+  ],
+  "nextId": 42,
+  "feedback": [
+    {
+      "id": 1,
+      "date": "2025-11-10",
+      "title": "Excellent Service",
+      "email": "john.doe@example.com",
+      "description": "The customer support team was very helpful and responsive. Highly recommend!"
+    },
+    {
+      "id": 2,
+      "date": "2025-11-12",
+      "title": "Product Quality Issue",
+      "email": "jane.smith@example.com",
+      "description": "The laptop I received had a defective keyboard. Hoping for a quick replacement."
+    },
+    {
+      "id": 3,
+      "date": "2025-11-14",
+      "title": "Fast Delivery",
+      "email": "mike.johnson@example.com",
+      "description": "Ordered on Monday, received on Wednesday. Packaging was excellent!"
+    }
+  ]
+}
