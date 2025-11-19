@@ -21,9 +21,27 @@ async function bootstrap() {
     .setDescription('A RESTful API for inventory management with CRUD operations. This API provides endpoints to create, read, update, and delete inventory items, as well as search functionality.')
     .setVersion('1.0.0')
     .addServer(`http://localhost:${process.env.PORT || 3000}`, 'Local development server')
+    // Add security schemes
+    .addApiKey(
+      { type: 'apiKey', name: 'X-API-Key', in: 'header' },
+      'ApiKeyAuth'
+    )
+    .addBearerAuth(
+      {
+        type: 'http',
+        scheme: 'bearer',
+        bearerFormat: 'JWT',
+        description: 'JWT Bearer token authentication'
+      },
+      'BearerAuth'
+    )
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+  
+  // Apply API Key security globally to all endpoints
+  // Individual endpoints can override this using @ApiSecurity() decorator
+  document.security = [{ ApiKeyAuth: [] }];
   
   // Save OpenAPI spec to file
   const OPENAPI_SPEC_FILE = path.join(process.cwd(), 'openapi.json');
