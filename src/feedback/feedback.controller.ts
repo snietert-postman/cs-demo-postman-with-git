@@ -34,69 +34,69 @@ export class FeedbackController {
     return { success: true, count: data.length, data };
   }
 
-  @Get(':id')
-  @ApiOperation({ 
-    summary: 'Get a specific feedback item',
-    description: 'Retrieve details of a single feedback item by its ID'
-  })
-  @ApiParam({ 
-    name: 'id', 
-    description: 'Unique identifier of the feedback item',
-    example: 1
-  })
-  @ApiResponse({ 
-    status: 200, 
-    description: 'Successfully retrieved feedback item',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean', example: true },
-        data: { $ref: getSchemaPath(FeedbackItemEntity) }
-      }
-    }
-  })
-  @ApiResponse({ 
-    status: 404, 
-    description: 'Feedback item not found',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean', example: false },
-        error: { type: 'string', example: 'Feedback item with ID 1 not found' }
-      }
-    }
-  })
-  findOne(@Param('id', ParseIntPipe) id: number) {
-    const data = this.feedbackService.findOne(id);
-    return { success: true, data };
-  }
+  // @Get(':id')
+  // @ApiOperation({ 
+  //   summary: 'Get a specific feedback item',
+  //   description: 'Retrieve details of a single feedback item by its ID'
+  // })
+  // @ApiParam({ 
+  //   name: 'id', 
+  //   description: 'Unique identifier of the feedback item',
+  //   example: 1
+  // })
+  // @ApiResponse({ 
+  //   status: 200, 
+  //   description: 'Successfully retrieved feedback item',
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       success: { type: 'boolean', example: true },
+  //       data: { $ref: getSchemaPath(FeedbackItemEntity) }
+  //     }
+  //   }
+  // })
+  // @ApiResponse({ 
+  //   status: 404, 
+  //   description: 'Feedback item not found',
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       success: { type: 'boolean', example: false },
+  //       error: { type: 'string', example: 'Feedback item with ID 1 not found' }
+  //     }
+  //   }
+  // })
+  // findOne(@Param('id', ParseIntPipe) id: number) {
+  //   const data = this.feedbackService.findOne(id);
+  //   return { success: true, data };
+  // }
 
-  @Post()
-  @HttpCode(HttpStatus.CREATED)
-  @ApiOperation({ 
-    summary: 'Submit new customer feedback',
-    description: 'Create a new feedback item'
-  })
-  @ApiBody({ type: CreateFeedbackItemDto })
-  @ApiResponse({ 
-    status: 201, 
-    description: 'Feedback submitted successfully',
-    schema: {
-      type: 'object',
-      properties: {
-        success: { type: 'boolean', example: true },
-        message: { type: 'string', example: 'Feedback submitted successfully' },
-        data: { $ref: getSchemaPath(FeedbackItemEntity) }
-      }
-    }
-  })
-  @ApiResponse({ 
-    status: 400, 
-    description: 'Invalid input data'
-  })
-  async create(@Body() createDto: CreateFeedbackItemDto) {
-    const data = await this.feedbackService.create(createDto);
-    return { success: true, message: 'Feedback submitted successfully', data };
-  }
+  // @Post()
+  // @HttpCode(HttpStatus.CREATED)
+  // @ApiOperation({ 
+  //   summary: 'Submit new customer feedback',
+  //   description: 'Create a new feedback item'
+  // })
+  // @ApiBody({ type: CreateFeedbackItemDto })
+  // @ApiResponse({ 
+  //   status: 201, 
+  //   description: 'Feedback submitted successfully',
+  //   schema: {
+  //     type: 'object',
+  //     properties: {
+  //       success: { type: 'boolean', example: true },
+  //       message: { type: 'string', example: 'Feedback submitted successfully' },
+  //       data: { $ref: getSchemaPath(FeedbackItemEntity) }
+  //     }
+  //   }
+  // })
+  // @ApiResponse({ 
+  //   status: 400, 
+  //   description: 'Invalid input data'
+  // })
+  // async create(@Body() createDto: CreateFeedbackItemDto) {
+  //   const data = await this.feedbackService.create(createDto);
+  //   return { success: true, message: 'Feedback submitted successfully', data };
+  // }
 }
 
