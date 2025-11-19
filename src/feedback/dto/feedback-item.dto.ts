@@ -5,6 +5,8 @@ export class FeedbackItemEntity {
   @ApiProperty({
     description: 'Auto-generated unique identifier',
     example: 1,
+    type: 'integer',
+    format: 'int32',
   })
   id: number;
 

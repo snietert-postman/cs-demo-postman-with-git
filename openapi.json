@@ -548,7 +548,11 @@
     "title": "Inventory Management API",
     "description": "A RESTful API for inventory management with CRUD operations. This API provides endpoints to create, read, update, and delete inventory items, as well as search functionality.",
     "version": "1.0.0",
-    "contact": {}
+    "contact": {
+      "name": "API Support",
+      "url": "https://example.com/support",
+      "email": "support@example.com"
+    }
   },
   "tags": [],
   "servers": [
@@ -576,9 +580,10 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "number",
+            "type": "integer",
             "description": "Auto-generated unique identifier",
-            "example": 1
+            "example": 1,
+            "format": "int32"
           },
           "name": {
             "type": "string",
@@ -591,14 +596,16 @@
             "example": "High-performance laptop for business use"
           },
           "quantity": {
-            "type": "number",
+            "type": "integer",
             "description": "Available quantity",
-            "example": 15
+            "example": 15,
+            "format": "int32"
           },
           "price": {
             "type": "number",
             "description": "Price per unit",
-            "example": 1299.99
+            "example": 1299.99,
+            "format": "double"
           }
         },
         "required": [
@@ -623,16 +630,18 @@
             "example": "High-performance laptop for business use"
           },
           "quantity": {
-            "type": "number",
+            "type": "integer",
             "description": "Available quantity",
             "example": 15,
-            "minimum": 0
+            "minimum": 0,
+            "format": "int32"
           },
           "price": {
             "type": "number",
             "description": "Price per unit",
             "example": 1299.99,
-            "minimum": 0
+            "minimum": 0,
+            "format": "double"
           }
         },
         "required": [
@@ -656,16 +665,18 @@
             "example": "Updated description"
           },
           "quantity": {
-            "type": "number",
+            "type": "integer",
             "description": "Available quantity",
             "example": 20,
-            "minimum": 0
+            "minimum": 0,
+            "format": "int32"
           },
           "price": {
             "type": "number",
             "description": "Price per unit",
             "example": 1499.99,
-            "minimum": 0
+            "minimum": 0,
+            "format": "double"
           }
         },
         "required": [
@@ -679,9 +690,10 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "number",
+            "type": "integer",
             "description": "Auto-generated unique identifier",
-            "example": 1
+            "example": 1,
+            "format": "int32"
           },
           "date": {
             "type": "string",

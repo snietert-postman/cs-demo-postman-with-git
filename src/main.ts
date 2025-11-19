@@ -20,6 +20,7 @@ async function bootstrap() {
     .setTitle('Inventory Management API')
     .setDescription('A RESTful API for inventory management with CRUD operations. This API provides endpoints to create, read, update, and delete inventory items, as well as search functionality.')
     .setVersion('1.0.0')
+    .setContact('API Support', 'https://example.com/support', 'support@example.com')
     .addServer(`http://localhost:${process.env.PORT || 3000}`, 'Local development server')
     // Add security schemes
     .addApiKey(

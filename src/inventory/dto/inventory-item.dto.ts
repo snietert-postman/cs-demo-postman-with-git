@@ -22,6 +22,8 @@ export class CreateInventoryItemDto {
     description: 'Available quantity',
     example: 15,
     minimum: 0,
+    type: 'integer',
+    format: 'int32',
   })
   @IsNumber()
   @Min(0)
@@ -31,6 +33,8 @@ export class CreateInventoryItemDto {
     description: 'Price per unit',
     example: 1299.99,
     minimum: 0,
+    type: 'number',
+    format: 'double',
   })
   @IsNumber()
   @Min(0)
@@ -58,6 +62,8 @@ export class UpdateInventoryItemDto {
     description: 'Available quantity',
     example: 20,
     minimum: 0,
+    type: 'integer',
+    format: 'int32',
   })
   @IsNumber()
   @Min(0)
@@ -67,6 +73,8 @@ export class UpdateInventoryItemDto {
     description: 'Price per unit',
     example: 1499.99,
     minimum: 0,
+    type: 'number',
+    format: 'double',
   })
   @IsNumber()
   @Min(0)
@@ -77,6 +85,8 @@ export class InventoryItemEntity {
   @ApiProperty({
     description: 'Auto-generated unique identifier',
     example: 1,
+    type: 'integer',
+    format: 'int32',
   })
   id: number;
 
@@ -95,12 +105,16 @@ export class InventoryItemEntity {
   @ApiProperty({
     description: 'Available quantity',
     example: 15,
+    type: 'integer',
+    format: 'int32',
   })
   quantity: number;
 
   @ApiProperty({
     description: 'Price per unit',
     example: 1299.99,
+    type: 'number',
+    format: 'double',
   })
   price: number;
 }
