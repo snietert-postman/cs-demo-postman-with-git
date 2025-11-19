@@ -169,14 +169,29 @@ jobs:
                 echo "✏️  Collection '$EXISTING_COLLECTION_NAME' exists in workspace (UID: $EXISTING_COLLECTION_UID)"
                 echo "Updating collection using UID: $EXISTING_COLLECTION_UID"
                 
-                # Wrap collection data in "collection" object as required by Postman API
-                COLLECTION_DATA=$(jq '{collection: .}' "$collection_file")
+                # Log original file size
+                ORIGINAL_SIZE=$(wc -c < "$collection_file")
+                echo "📄 Original collection file size: $ORIGINAL_SIZE bytes"
+                
+                # Wrap collection data in "collection" object and remove all Postman-generated IDs
+                # Remove: info._postman_id, item[].id, item[].uid, and nested script/event IDs
+                COLLECTION_DATA=$(jq -c '{collection: (. | 
+                  del(.info._postman_id) | 
+                  walk(if type == "object" then del(.id, .uid) else . end)
+                )}' "$collection_file")
                 
                 # Log the endpoint and payload for debugging
                 UPDATE_URL="https://api.getpostman.com/collections/$EXISTING_COLLECTION_UID"
                 echo "🔗 PUT Endpoint: $UPDATE_URL"
-                echo "📦 Payload preview:"
-                echo "$COLLECTION_DATA" | jq -C '.collection | {name: .info.name, item_count: (.item | length)}'
+                echo "📦 Processed payload size: $(echo "$COLLECTION_DATA" | wc -c) bytes"
+                echo "📦 Payload structure:"
+                echo "$COLLECTION_DATA" | jq -C '. | keys'
+                echo "📦 Collection info:"
+                echo "$COLLECTION_DATA" | jq -C '.collection | {name: .info.name, has_postman_id: (.info._postman_id != null), item_count: (.item | length), has_full_items: (.item[0] != null)}'
+                
+                # Show first item details to verify full data
+                echo "📦 First item preview (to verify full content):"
+                echo "$COLLECTION_DATA" | jq -C '.collection.item[0] | {name: .name, has_request: (.request != null), has_event: (.event != null), event_count: (if .event then (.event | length) else 0 end)}'
                 
                 UPDATE_RESPONSE=$(curl -s -X PUT \
                   "$UPDATE_URL" \
@@ -196,14 +211,29 @@ jobs:
                 # Collection doesn't exist - create it
                 echo "➕ Collection '$COLLECTION_NAME' doesn't exist. Creating..."
                 
-                # Wrap collection data in "collection" object and remove _postman_id (Postman will generate a new one)
-                COLLECTION_DATA=$(jq '{collection: (. | del(.info._postman_id))}' "$collection_file")
+                # Log original file size
+                ORIGINAL_SIZE=$(wc -c < "$collection_file")
+                echo "📄 Original collection file size: $ORIGINAL_SIZE bytes"
+                
+                # Wrap collection data in "collection" object and remove all Postman-generated IDs
+                # Remove: info._postman_id, item[].id, item[].uid, and nested script/event IDs
+                COLLECTION_DATA=$(jq -c '{collection: (. | 
+                  del(.info._postman_id) | 
+                  walk(if type == "object" then del(.id, .uid) else . end)
+                )}' "$collection_file")
                 
                 # Log the endpoint and payload for debugging
                 CREATE_URL="https://api.getpostman.com/collections?workspace=$WORKSPACE_ID"
                 echo "🔗 POST Endpoint: $CREATE_URL"
-                echo "📦 Payload preview:"
-                echo "$COLLECTION_DATA" | jq -C '.collection | {name: .info.name, has_postman_id: (.info._postman_id != null), item_count: (.item | length)}'
+                echo "📦 Processed payload size: $(echo "$COLLECTION_DATA" | wc -c) bytes"
+                echo "📦 Payload structure:"
+                echo "$COLLECTION_DATA" | jq -C '. | keys'
+                echo "📦 Collection info:"
+                echo "$COLLECTION_DATA" | jq -C '.collection | {name: .info.name, has_postman_id: (.info._postman_id != null), item_count: (.item | length), has_full_items: (.item[0] != null)}'
+                
+                # Show first item details to verify full data
+                echo "📦 First item preview (to verify full content):"
+                echo "$COLLECTION_DATA" | jq -C '.collection.item[0] | {name: .name, has_request: (.request != null), has_event: (.event != null), event_count: (if .event then (.event | length) else 0 end)}'
                 
                 CREATE_RESPONSE=$(curl -s -X POST \
                   "$CREATE_URL" \
